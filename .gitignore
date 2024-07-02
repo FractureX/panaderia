@@ -1,0 +1,15 @@
+# Ignorar la carpeta virtualenv
+.venv/
+# Ignorar las imágenes
+images/
+# Ignorar cualquier archivo .DS_Store (específico de macOS)
+.DS_Store
+
+# Ignorar archivos de respaldo de Vim
+*.swp
+
+# Ignorar archivos de caché de Python
+__pycache__/
+
+# Ignorar archivos de registro de errores de Python
+*.log
