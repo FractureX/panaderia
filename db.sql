@@ -9,8 +9,7 @@ DROP TABLE IF EXISTS [panaderia].[dbo].[role];
 DROP TABLE IF EXISTS [panaderia].[dbo].[status];
 DROP TABLE IF EXISTS [panaderia].[dbo].[category];
 
-CREATE TABLE dbo.status
-(
+CREATE TABLE [panaderia].[dbo].[status] (
     id integer NOT NULL IDENTITY(1,1),
     name varchar(50) NOT NULL,
     CONSTRAINT PK_status PRIMARY KEY (id),
@@ -49,7 +48,7 @@ CREATE TABLE [panaderia].[dbo].[user] (
         REFERENCES [panaderia].[dbo].[status] (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE [panaderia].[dbo].[product](
+CREATE TABLE [panaderia].[dbo].[product] (
     id INT IDENTITY(1,1) NOT NULL,
     price NUMERIC(12, 2) NOT NULL DEFAULT (0.00),
     created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
@@ -63,7 +62,7 @@ CREATE TABLE [panaderia].[dbo].[product](
         REFERENCES [panaderia].[dbo].[status] (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE [panaderia].[dbo].[inventory](
+CREATE TABLE [panaderia].[dbo].[inventory] (
     id INT IDENTITY(1,1) NOT NULL,
     id_product INT NOT NULL,
     quantity NUMERIC(12, 2) NOT NULL,
