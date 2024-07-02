@@ -25,7 +25,7 @@ from src.shared.models.response import messages
 def get_categories(info: dict[str, Any], connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=int(info.get("id")), module=auths_per_user.Module.CATEGORY, crud=auths_per_user.Crud.SELECT, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=int(info.get("id")), module=auths_per_user.Module.CATEGORY, crud=auths_per_user.Crud.SELECT, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Select categories

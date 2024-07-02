@@ -42,8 +42,8 @@ POSTGRESQL_CREDENTIAL_UPDATE        = "UPDATE public.credential SET email = %s, 
 POSTGRESQL_USER_SELECT_ALL          = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
 POSTGRESQL_USER_SELECT_BY_ID        = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE id = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
 POSTGRESQL_USER_SELECT_BY_EMAIL     = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE email = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
-POSTGRESQL_USER_INSERT              = f"INSERT INTO {PostgreSQLTables.USER.value} (username, password, email, created_at, updated_at, id_role, id_status) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id; "
-POSTGRESQL_USER_UPDATE              = f"UPDATE {PostgreSQLTables.USER.value} SET username = %s, password = %s, email = %s, updated_at = NOW(), id_role = %s, id_status = %s WHERE id = %s RETURNING id; "
+POSTGRESQL_USER_INSERT              = f"INSERT INTO {PostgreSQLTables.USER.value} (username, password, email, id_role, id_status) OUTPUT Inserted.* VALUES (?, ?, ?, ?, ?); "
+POSTGRESQL_USER_UPDATE              = f"UPDATE {PostgreSQLTables.USER.value} SET username = ?, password = ?, email = ?, updated_at = GETDATE(), id_role = ?, id_status = ? OUTPUT INSERTED.* WHERE id = ?; "
 POSTGRESQL_USER_DELETE              = f"DELETE FROM {PostgreSQLTables.USER.value} WHERE id = %s RETURNING id; "
 
 # Shop
@@ -96,4 +96,4 @@ POSTGRESQL_NOTIFICATION_INSERT              = "INSERT INTO public.notification (
 POSTGRESQL_NOTIFICATION_DETAIL_INSERT   = "INSERT INTO public.notification_detail (id_notification, id_user, read) VALUES (%s, %s, false) RETURNING id; "
 
 def getSelectQueryById(table: str) -> str:
-    return f"SELECT * FROM [panaderia].[dbo].[{table}] WHERE id = %s; "
+    return f"SELECT * FROM {table} WHERE id = ?; "

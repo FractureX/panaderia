@@ -1,11 +1,8 @@
 import re
 import pyodbc
-from psycopg2.extras import NamedTupleCursor
-from psycopg2 import errors
 from typing import Any
 from pydantic import PositiveInt
 from fastapi import status
-import json
 
 from src.shared.config.Environment import get_environment_variables
 from src.shared.models.database.idatabase import IDatabase
@@ -67,16 +64,14 @@ class SQLServer(IDatabase):
             for row in mycursor.fetchall():
                 row_dict = dict(zip(columns, row))
                 returnValue.append(row_dict)
-        except errors.UniqueViolation as e:
-            print("errors.UniqueViolation")
-            print(e)
+        except pyodbc.Error as e:
+            print(str(e))
             print("--------------------------------------------")
-            returnValue = getJsonResponse(status_code=status.HTTP_409_CONFLICT, success=False, message=SQLServer.__filter_postgresql_error_message(e), data={})
-        except Exception as e:
-            print("Exception")
-            print(e)
-            print("--------------------------------------------")
-            returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=SQLServer.__filter_postgresql_error_message(e), data={})
+            if e.args[0] == '23000':
+                # Llave duplicada
+                returnValue = getJsonResponse(status_code=status.HTTP_409_CONFLICT, success=False, message=SQLServer.__filter_postgresql_error_message(e), data={})
+            else:
+                returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=str(e), data={})
         finally:
             if mycursor: mycursor.close()
             return returnValue
@@ -95,16 +90,14 @@ class SQLServer(IDatabase):
             else:
                 mycursor.execute(query=query)
             returnValue = len(mycursor.fetchall()) > 0
-        except errors.UniqueViolation as e:
-            print("errors.UniqueViolation")
-            print(e.pgerror)
+        except pyodbc.Error as e:
+            print(str(e))
             print("--------------------------------------------")
-            returnValue = getJsonResponse(status_code=status.HTTP_409_CONFLICT, success=False, message=SQLServer.__filter_postgresql_error_message(e), data={})
-        except Exception as e:
-            print("Exception")
-            print(e.pgerror)
-            print("--------------------------------------------")
-            returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=e.pgerror, data={})
+            if e.args[0] == '23000':
+                # Llave duplicada
+                returnValue = getJsonResponse(status_code=status.HTTP_409_CONFLICT, success=False, message=SQLServer.__filter_postgresql_error_message(e), data={})
+            else:
+                returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=str(e), data={})
         finally:
             if mycursor: mycursor.close()
             return returnValue
@@ -123,9 +116,9 @@ class SQLServer(IDatabase):
             returnValue = len(mycursor.fetchall()) > 0
         except Exception as e:
             print("Exception")
-            print(e.pgerror)
+            print(e)
             print("--------------------------------------------")
-            returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=e.pgerror, data={})
+            returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=e, data={})
         finally:
             if mycursor: mycursor.close()
             return returnValue
@@ -133,19 +126,19 @@ class SQLServer(IDatabase):
     @staticmethod
     def __filter_postgresql_error_message(e: Exception) -> str:
         returnValue = str(e)
-        if isinstance(e, errors.UniqueViolation):
-            returnValue = ""
-            matches_lang = (
-                r'Key \((.*?)\)=\((.*?)\) already exists', 
-                r'Ya existe la llave \((.*?)\)=\((.*?)\)'
-            )
-            for match_lang in matches_lang:
-                matches = re.findall(match_lang, e.pgerror)
-                if matches:
-                    for match in matches:
-                        columns = match[0].split(', ')
-                        values = match[1].split(', ')
-                        for column, value in zip(columns, values):
-                            returnValue += ("\n" if len(returnValue) > 0 else "") + getDataAlreadyExists(dataName=value)
-        print("Epa")
+        # if isinstance(e, errors.UniqueViolation):
+        #     returnValue = ""
+        #     matches_lang = (
+        #         r'Key \((.*?)\)=\((.*?)\) already exists', 
+        #         r'Ya existe la llave \((.*?)\)=\((.*?)\)'
+        #     )
+        #     for match_lang in matches_lang:
+        #         matches = re.findall(match_lang, e)
+        #         if matches:
+        #             for match in matches:
+        #                 columns = match[0].split(', ')
+        #                 values = match[1].split(', ')
+        #                 for column, value in zip(columns, values):
+        #                     returnValue += ("\n" if len(returnValue) > 0 else "") + getDataAlreadyExists(dataName=value)
+        # print("Epa")
         return returnValue

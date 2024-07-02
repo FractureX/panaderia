@@ -22,17 +22,17 @@ router = APIRouter()
 @router.post("/add", response_model=CustomResponse, name="Add user")
 async def post_user(user: CreateUser, info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):
     if (type(info) == JSONResponse): return info
-    return service.post_user(info=info, user=user, connPostgreSQL=connPostgreSQL)
+    return service.post_user(info=info, user=user, connSQLServer=connPostgreSQL)
 
 @router.get("/", response_model=CustomResponses, name="Get all users")
 async def get_user(info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):
     if (type(info) == JSONResponse): return info
-    return service.get_user(info=info, connPostgreSQL=connPostgreSQL)
+    return service.get_users(info=info, connSQLServer=connPostgreSQL)
 
 @router.get("/{id}", response_model=CustomResponse, name="Get user by id")
 async def get_user_by_id(id: PositiveInt, info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):
     if (type(info) == JSONResponse): return info
-    return service.get_user_by_id(info=info, id=id, connPostgreSQL=connPostgreSQL)
+    return service.get_user_by_id(info=info, id=id, connSQLServer=connPostgreSQL)
 
 @router.get("/client/{id_institution}", response_model=CustomResponses, name="Get clients user by institution id")
 async def get_user_client_by_id_institution(id_institution: PositiveInt, info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):
@@ -49,7 +49,7 @@ async def get_user_client_by_id_institution_criteria(id_institution: PositiveInt
 @router.put("/modify", response_model=CustomResponse, name="Modify user")
 async def put_user(user: UpdateUser, info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):
     if (type(info) == JSONResponse): return info
-    return service.put_user(info=info, user=user, connPostgreSQL=connPostgreSQL)
+    return service.put_user(info=info, user=user, connSQLServer=connPostgreSQL)
 
 @router.delete("/inactivate/{id_institution}/{id}", response_model=CustomResponse, name="Inactivate user")
 async def inactivate_user(id: PositiveInt, info: dict[str, Any] = Depends(validate_token), connPostgreSQL: connection = Depends(SQLServer.get_connection)):

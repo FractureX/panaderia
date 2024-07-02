@@ -62,7 +62,7 @@ def validate_ids(*, table: str, vars: dict[str, int], create: bool = False, conn
         for enum_table in PostgreSQLTables:
             if (vars.get(f"id_{enum_table.value}", None) is not None):
                 if (enum_table.value != table or (enum_table.value == table and not create)):
-                    result = SQLServer.select(conn=connSQLServer, query=queries.getSelectQueryById(enum_table.value), vars=(vars[f'id_{enum_table.value}'],))
+                    result = SQLServer.select(conn=connSQLServer, query=queries.getSelectQueryById(enum_table.value), vars=(vars[f'id_{enum_table.value}'],), print_data=True)
                     if (type(result) != list): raise result
                     if (len(returnStrValue) == 0): returnStrValue += messages.getDataNotFound(dataName=f"{enum_table.value.replace('_', ' ').capitalize()} {vars[f'id_{enum_table.value}']}") if len(result) == 0 else ""
                     else: returnStrValue += ", " + messages.getDataNotFound(dataName=f"{enum_table.value.replace('_', ' ').capitalize()} {vars[f'id_{enum_table.value}']}") if len(result) == 0 else ""

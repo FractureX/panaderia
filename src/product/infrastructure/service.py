@@ -29,7 +29,7 @@ from src.shared.utils import auths_per_user
 async def post_product(*, info: dict[str, Any], product: CreateProduct, image: UploadFile | None = None, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.CREATE, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.CREATE, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -72,7 +72,7 @@ async def post_product(*, info: dict[str, Any], product: CreateProduct, image: U
 def get_products(info: dict[str, Any], connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         result = SQLServer.select(connPostgreSQL, query=queries.POSTGRESQL_PRODUCT_SELECT_ALL)
@@ -88,7 +88,7 @@ def get_products(info: dict[str, Any], connPostgreSQL: connection) -> JSONRespon
 def get_product_by_id(info: dict[str, Any], id: PositiveInt, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -105,7 +105,7 @@ def get_product_by_id(info: dict[str, Any], id: PositiveInt, connPostgreSQL: con
 def get_products_by_id_institution(info: dict[str, Any], id: PositiveInt, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -126,7 +126,7 @@ def get_products_by_id_institution(info: dict[str, Any], id: PositiveInt, connPo
 def get_products_by_id_shop(info: dict[str, Any], id_shop: PositiveInt, connPostgreSQL: connection, connMongoDB: MongoClient) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.SELECT, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -147,7 +147,7 @@ def get_products_by_id_shop(info: dict[str, Any], id_shop: PositiveInt, connPost
 async def put_product(*, info: dict[str, Any], product: UpdateProduct, image: UploadFile | None = None, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -195,7 +195,7 @@ async def put_product(*, info: dict[str, Any], product: UpdateProduct, image: Up
 def inactivate_product(info: dict[str, Any], id: PositiveInt, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
@@ -219,7 +219,7 @@ def inactivate_product(info: dict[str, Any], id: PositiveInt, connPostgreSQL: co
 def activate_product(info: dict[str, Any], id: PositiveInt, connPostgreSQL: connection) -> JSONResponse:
     try:
         # Validar que pueda usar el módulo
-        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connPostgreSQL=connPostgreSQL)
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.PRODUCT, crud=auths_per_user.Crud.UPDATE, connSQLServer=connPostgreSQL)
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs

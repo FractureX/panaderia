@@ -36,7 +36,7 @@ app.include_router(router=auth_router, prefix="/token", tags=["auth"])
 #app.include_router(router=category_router, prefix="/category", tags=["category"])
 #app.include_router(router=image_router, prefix="/image", tags=["image"])
 #app.include_router(router=product_router, prefix="/product", tags=["product"])
-#app.include_router(router=user_router, prefix="/user", tags=["user"])
+app.include_router(router=user_router, prefix="/user", tags=["user"])
 
 # Montar los directorios estáticos para servir los archivos
 for directory in ALLOWED_DIRECTORIES:
