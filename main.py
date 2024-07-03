@@ -39,5 +39,7 @@ app.include_router(router=order_router, prefix="/order", tags=["order"])
 
 os.makedirs(os.getcwd() + os.sep + "images" + os.sep + "PRODUCT", exist_ok=True)
 
+print(get_password_hash("123456"))
+
 if __name__ == "__main__":
     Server(Config(app="main:app", reload=True)).run()

@@ -136,4 +136,4 @@ CREATE TABLE [proyecto].[dbo].[invoice] (
 INSERT INTO [proyecto].[dbo].[role] (name) VALUES ('Administrador'), ('Personal'); 
 INSERT INTO [proyecto].[dbo].[category] (name) VALUES ('Panadería'), ('Pastelería'), ('Bebidas'); 
 INSERT INTO [proyecto].[dbo].[status] (name) VALUES ('Activo'), ('Inactivo'), ('Pagado'), ('No pagado'); 
-INSERT INTO [proyecto].[dbo].[user] (username, password, email, id_role, id_status) VALUES ('administrador', '$2b$12$20bIutLFKlLo8ckty31fKe/wsjUNLS6C6TG6Q81CEVhRX1BkjEoJ2', 'administrador@gmail.com', 1, 1); 
+INSERT INTO [proyecto].[dbo].[user] (username, password, email, id_role, id_status) VALUES ('administrador', '$2b$12$3LnQFnblDRHlUlUlzEMeyuCEWUHrhwaSpYJRud1VQvKjXrUhfwbc.', 'administrador@gmail.com', 1, 1); 
