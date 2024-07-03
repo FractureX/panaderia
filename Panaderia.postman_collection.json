@@ -225,6 +225,50 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "User / Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwOTMzNzExfQ.iA4sOsETk8U9fDjkjQgU-GEmqQo_pGA1t6p5X2Lc25o"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"new_user\",\r\n  \"password\": \"123456\",\r\n  \"email\": \"shaquille.montero.vergel123@gmail.com\",\r\n  \"id_role\": 1,\r\n  \"id_status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user/delete/:id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"delete",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

@@ -44,7 +44,7 @@ POSTGRESQL_USER_SELECT_BY_ID        = f"SELECT * FROM {PostgreSQLTables.USER.val
 POSTGRESQL_USER_SELECT_BY_EMAIL     = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE email = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
 POSTGRESQL_USER_INSERT              = f"INSERT INTO {PostgreSQLTables.USER.value} (username, password, email, id_role, id_status) OUTPUT Inserted.* VALUES (?, ?, ?, ?, ?); "
 POSTGRESQL_USER_UPDATE              = f"UPDATE {PostgreSQLTables.USER.value} SET username = ?, password = ?, email = ?, updated_at = GETDATE(), id_role = ?, id_status = ? OUTPUT INSERTED.* WHERE id = ?; "
-POSTGRESQL_USER_DELETE              = f"DELETE FROM {PostgreSQLTables.USER.value} WHERE id = %s RETURNING id; "
+POSTGRESQL_USER_DELETE              = f"DELETE FROM {PostgreSQLTables.USER.value} OUTPUT DELETED.* WHERE id = ?; "
 
 # Shop
 POSTGRESQL_SHOP_INSERT                      = "INSERT INTO public.shop (name, phone, email, id_status, id_institution, id_ubication, image, id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id; "

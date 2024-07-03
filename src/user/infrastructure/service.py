@@ -103,8 +103,6 @@ def put_user(info: dict[str, Any], user: UpdateUser, connSQLServer: pyodbc.Conne
         
         # Update user
         user.password = get_password_hash(plain_password=user.password)
-        print(f"user: {user}")
-        print(f"functions.to_json(object=user): {functions.to_json(object=user)}")
         result = SQLServer.update(conn=connSQLServer, query=queries.POSTGRESQL_USER_UPDATE, vars=functions.to_tuple(vars=functions.to_json(object=user), include_id=True, invert_id=True), print_data=True)
         validation = functions.validate_crud_action(result=result, message=messages.UPDATE_INTERNAL_SERVER_ERROR, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
@@ -113,6 +111,33 @@ def put_user(info: dict[str, Any], user: UpdateUser, connSQLServer: pyodbc.Conne
         connSQLServer.commit()
         if (hasattr(user, 'password')): del(user.password)
         return getJsonResponse(status_code=status.HTTP_200_OK, success=True, message="", data=functions.to_json(object=user))
+    except Exception as e:
+        print(f"Exception: {e}")
+        connSQLServer.rollback()
+        return getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=f"There was an error: {str(e)}", data={})
+
+def delete_user(info: dict[str, Any], id: PositiveInt, connSQLServer: pyodbc.Connection) -> JSONResponse:
+    try:
+        # Validar que pueda usar el módulo
+        validate = auths_per_user.validate_user_module(id_user=info.get("id"), module=auths_per_user.Module.USER, crud=auths_per_user.Crud.UPDATE, connSQLServer=connSQLServer)
+        if (type(validate) == JSONResponse): return validate
+        
+        # Validar IDs
+        result = functions.validate_ids(table=PostgreSQLTables.USER.value, vars={"id": id}, connSQLServer=connSQLServer)
+        validation = functions.validate_crud_action(result=result, message=result, connSQLServer=connSQLServer)
+        if (isinstance(validation, JSONResponse)): return validation
+        
+        # Validar que no sea el mismo usuario
+        if id == info.get("id"): return getJsonResponse(status_code=status.HTTP_401_UNAUTHORIZED, success=False, message=messages.USER_DELETE_SAME_USER, data={})
+        
+        # Delete user
+        result = SQLServer.update(conn=connSQLServer, query=queries.POSTGRESQL_USER_DELETE, vars=(id,), print_data=True)
+        validation = functions.validate_crud_action(result=result, message=messages.UPDATE_INTERNAL_SERVER_ERROR, connSQLServer=connSQLServer)
+        if (isinstance(validation, JSONResponse)): return validation
+        
+        # Commit
+        connSQLServer.commit()
+        return getJsonResponse(status_code=status.HTTP_200_OK, success=True, message="", data={"id": id})
     except Exception as e:
         print(f"Exception: {e}")
         connSQLServer.rollback()
