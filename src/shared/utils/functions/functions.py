@@ -21,7 +21,7 @@ from passlib.context import CryptContext
 from src.shared.config.Environment import get_environment_variables
 from src.shared.utils import ids
 from src.shared.utils.tables import (
-    PostgreSQLTables,
+    SQLServerTables,
 )
 from src.shared.infrastructure.database.sqlserver import SQLServer
 from src.shared.models.response import messages
@@ -53,14 +53,17 @@ def to_tuple(vars: dict[str, Any], exclude: list[str] = None, include_id: bool =
 def validate_ids(*, table: str, vars: dict[str, int], create: bool = False, connSQLServer: SQLServer = None) -> str | JSONResponse:
     print('------------------ validate_ids ------------------')
     returnStrValue: str = ""
-    for enum_table in PostgreSQLTables:
+    for enum_table in SQLServerTables:
         if (table == enum_table.value):
             if vars.get('id', None) is not None:
                 vars[f'id_{enum_table.value}'] = vars['id']
     if (vars.get('id', None) is not None): del(vars['id'])
+    print(f"vars: {vars}")
     try:
-        for enum_table in PostgreSQLTables:
+        for enum_table in SQLServerTables:
             if (vars.get(f"id_{enum_table.value}", None) is not None):
+                print(f"enum_table.value: {enum_table.value}")
+                print(f"table: {table}")
                 if (enum_table.value != table or (enum_table.value == table and not create)):
                     result = SQLServer.select(conn=connSQLServer, query=queries.getSelectQueryById(enum_table.value), vars=(vars[f'id_{enum_table.value}'],), print_data=True)
                     if (type(result) != list): raise result
@@ -75,7 +78,7 @@ async def validate_user(*, id: PositiveInt | None = None, form_data: OAuth2Passw
         if id is not None:
             user = SQLServer.select(conn=connSQLServer, query=queries.POSTGRESQL_USER_SELECT_BY_ID, vars=(id,), print_data=True)
         if form_data is not None:
-            user = SQLServer.select(conn=connSQLServer, query=queries.POSTGRESQL_USER_SELECT_BY_EMAIL, vars=(form_data.username,), print_data=True)
+            user = SQLServer.select(conn=connSQLServer, query=queries.POSTGRESQL_USER_SELECT_BY_USERNAME, vars=(form_data.username,), print_data=True)
         validation = validate_crud_action(connSQLServer=connSQLServer, result=user, message=messages.getDataNotFound("Usuario"))
         if (isinstance(validation, JSONResponse)): return validation
         user = user[0]
@@ -91,7 +94,8 @@ async def validate_user(*, id: PositiveInt | None = None, form_data: OAuth2Passw
         # Retornar cuando sea para iniciar sesión
         if form_data is not None:
             return {
-                "access_token": create_token(user.get("id"))
+                "access_token": create_token(user.get("id")),
+                "id_role": user.get("id_role")
             }
         
         # Retornar cuando no sea para iniciar sesión
@@ -117,26 +121,22 @@ async def save_image(module: Module, id: int, image: UploadFile | str, data: dic
         data.update({"image": None if image is None else image})
         return
     filename = image.filename.split('.')
+    
     extension = filename[len(filename) - 1].lower()
     filename = f"{id}.{extension}"
+    file_location = os.getcwd() + os.sep + "images" + os.sep + module.value + os.sep + filename
+    print(f"file_location: {file_location}")
     
-    file_location = os.path.join(module.value, filename)
-    
-    file_url = f"https://vainilla-backend-52fz.onrender.com/static/{module.value}/{filename}"
-    data.update({"image": file_url})
+    data.update({"image": file_location})
     
     # Guardar imagen
     if save_in_directory:
         with open(file_location, "wb") as f:
             f.write(await image.read())
         
-def delete_image(image_url: str, temp_image: bool = False):
+def delete_image(image_url: str):
     try:
-        base = image_url.split("/static/")[1].split("/")
-        module = base[0]
-        filename = base[1]
-        file_location = os.path.join(module, filename if not temp_image else 'temp-' + filename)
-        os.remove(f"{file_location}")
+        os.remove(f"{image_url}")
     except Exception as e:
         print(f"e: {str(e)}")
 

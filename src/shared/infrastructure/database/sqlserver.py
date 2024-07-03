@@ -50,7 +50,7 @@ class SQLServer(IDatabase):
             return returnValue
     
     @staticmethod
-    def insert(conn: pyodbc.Connection, query: str, vars: tuple, print_data = False) -> bool | Exception:
+    def insert(conn: pyodbc.Connection, query: str, vars: tuple, print_data = False) -> list[dict[str, Any]] | Exception:
         print("---------- Insert ----------")
         returnValue: list[dict] = []
         if (vars[0]) == 0: del(vars[0])
@@ -84,12 +84,18 @@ class SQLServer(IDatabase):
             print(f"vars: {str(vars)}")
         returnValue: Any
         try:
+            print("Epa 1")
             mycursor: pyodbc.Cursor = conn.cursor()
+            print("Epa 2")
             if (vars is not None):
+                print("Epa 3")
                 mycursor.execute(query, vars)
             else:
+                print("Epa 4")
                 mycursor.execute(query=query)
+            print("Epa 5")
             returnValue = len(mycursor.fetchall()) > 0
+            print("Epa 6")
         except pyodbc.Error as e:
             print(str(e))
             print("--------------------------------------------")
@@ -104,19 +110,22 @@ class SQLServer(IDatabase):
 
     @staticmethod
     def delete(conn: pyodbc.Connection, query: str, id: PositiveInt, print_data = False) -> bool | Exception:
-        print("---------- Update ----------")
-        if print_data:
-            print(f"query: {query}")
-            print(f"id: {id}")
+        print("---------- Delete ----------")
+        print(f"query: {query}")
+        print(f"id: {id}")
         returnValue: Any
         try:
             mycursor: pyodbc.Cursor = conn.cursor()
             mycursor.execute(query, (id,))
-            conn.commit()
-            returnValue = len(mycursor.fetchall()) > 0
-        except Exception as e:
-            print("Exception")
-            print(e)
+            columns = [column[0] for column in mycursor.description]
+            for row in mycursor.fetchall():
+                row_dict = dict(zip(columns, row))
+                returnValue.append(row_dict)
+            print("Flag 5")
+        except pyodbc.Error as e:
+            print("Exceptionnnnn")
+            print("Epa")
+            print(str(e))
             print("--------------------------------------------")
             returnValue = getJsonResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, success=False, message=e, data={})
         finally:

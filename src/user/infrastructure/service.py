@@ -23,7 +23,7 @@ from src.shared.utils.functions.auth import (
     get_password_hash
 )
 from src.shared.utils import auths_per_user
-from src.shared.utils.tables import PostgreSQLTables
+from src.shared.utils.tables import SQLServerTables
 
 def post_user(info: dict[str, Any], user: CreateUser, connSQLServer: pyodbc.Connection) -> JSONResponse:
     try:
@@ -32,7 +32,7 @@ def post_user(info: dict[str, Any], user: CreateUser, connSQLServer: pyodbc.Conn
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
-        result_validate = functions.validate_ids(table=PostgreSQLTables.USER.value, vars=functions.to_json(object=user), create=True, connSQLServer=connSQLServer)
+        result_validate = functions.validate_ids(table=SQLServerTables.USER.value, vars=functions.to_json(object=user), create=True, connSQLServer=connSQLServer)
         validation = functions.validate_crud_action(result=result_validate, message=result_validate, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
         
@@ -78,7 +78,7 @@ def get_user_by_id(info: dict[str, Any], id: PositiveInt, connSQLServer: pyodbc.
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
-        result_validate = functions.validate_ids(table=PostgreSQLTables.USER.value, vars={"id": id}, connSQLServer=connSQLServer)
+        result_validate = functions.validate_ids(table=SQLServerTables.USER.value, vars={"id": id}, connSQLServer=connSQLServer)
         validation = functions.validate_crud_action(result=result_validate, message=result_validate, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
         
@@ -97,7 +97,7 @@ def put_user(info: dict[str, Any], user: UpdateUser, connSQLServer: pyodbc.Conne
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
-        result = functions.validate_ids(table=PostgreSQLTables.USER.value, vars=functions.to_json(object=user), connSQLServer=connSQLServer)
+        result = functions.validate_ids(table=SQLServerTables.USER.value, vars=functions.to_json(object=user), connSQLServer=connSQLServer)
         validation = functions.validate_crud_action(result=result, message=result, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
         
@@ -123,7 +123,7 @@ def delete_user(info: dict[str, Any], id: PositiveInt, connSQLServer: pyodbc.Con
         if (type(validate) == JSONResponse): return validate
         
         # Validar IDs
-        result = functions.validate_ids(table=PostgreSQLTables.USER.value, vars={"id": id}, connSQLServer=connSQLServer)
+        result = functions.validate_ids(table=SQLServerTables.USER.value, vars={"id": id}, connSQLServer=connSQLServer)
         validation = functions.validate_crud_action(result=result, message=result, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
         
@@ -132,7 +132,7 @@ def delete_user(info: dict[str, Any], id: PositiveInt, connSQLServer: pyodbc.Con
         
         # Delete user
         result = SQLServer.update(conn=connSQLServer, query=queries.POSTGRESQL_USER_DELETE, vars=(id,), print_data=True)
-        validation = functions.validate_crud_action(result=result, message=messages.UPDATE_INTERNAL_SERVER_ERROR, connSQLServer=connSQLServer)
+        validation = functions.validate_crud_action(result=result, message=messages.DELETE_INTERNAL_SERVER_ERROR, connSQLServer=connSQLServer)
         if (isinstance(validation, JSONResponse)): return validation
         
         # Commit

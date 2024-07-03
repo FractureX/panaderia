@@ -26,12 +26,12 @@
 							"urlencoded": [
 								{
 									"key": "username",
-									"value": "shaquille.montero.vergel123@gmail.com",
+									"value": "prueba_administrador",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "123456",
+									"value": "prueba_administrador",
 									"type": "text"
 								},
 								{
@@ -95,7 +95,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"new_user\",\r\n  \"password\": \"123456\",\r\n  \"email\": \"new_user@gmail.com\",\r\n  \"id_role\": 2,\r\n  \"id_status\": 1\r\n}",
+							"raw": "{\r\n  \"username\": \"prueba_administrador\",\r\n  \"password\": \"prueba_administrador\",\r\n  \"email\": \"prueba_administrador@gmail.com\",\r\n  \"id_role\": 1,\r\n  \"id_status\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -263,8 +263,526 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "6"
+									"value": "2"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Order / Add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_user\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/order/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"order",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order / Add product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_order\": 1,\r\n  \"id_product\": 19,\r\n  \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/order/product/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"order",
+								"product",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order / Add invoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_order\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/order/invoice/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"order",
+								"invoice",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order / Get orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwNzk5ODE2fQ.A-q4qu94OUkNIdOcSYt83HSaeunrHTWd9IOlXMpt9iA"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order / Get order by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/order/:id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"order",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "Inventory / Update add quantity",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwOTMzNzExfQ.iA4sOsETk8U9fDjkjQgU-GEmqQo_pGA1t6p5X2Lc25o"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id_product\": 19,\r\n  \"quantity\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/inventory/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"inventory",
+								"add"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Product / Add",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwNzYyOTA4fQ._KzqVgQ7m7n_Rhju2zEWXo_H821J8jI6FE5M-lOAUuM"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product",
+									"value": "{\"name\": \"Prodducto\",\"description\": \"Descripción\",\"price\": 50.00, \"quantity\": 10.00, \"id_category\": 1, \"id_status\": 1}",
+									"contentType": "application/json",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "postman-cloud:///1ef25e19-f565-4800-9b1b-224d6a4a47f4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/add",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product / Get products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwNzk5ODE2fQ.A-q4qu94OUkNIdOcSYt83HSaeunrHTWd9IOlXMpt9iA"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product / Get product by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/:id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product / Get product by id category",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIyNTUyOTEyfQ.P1CdQ-3YmtK61mkmSeCdKzkACkDj2KNBhxT2pLvhdOA"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/category/:id_category",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								"category",
+								":id_category"
+							],
+							"variable": [
+								{
+									"key": "id_category",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product / Update",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwNzYyOTA4fQ._KzqVgQ7m7n_Rhju2zEWXo_H821J8jI6FE5M-lOAUuM"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product",
+									"value": "{\"id\": 12, \"name\": \"Producto\",\"description\": \"Descripción\",\"price\": 600.00, \"id_category\": 1, \"id_status\": 1}",
+									"contentType": "application/json",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "postman-cloud:///1ef246b2-73f8-46b0-95cd-b0eb9fdab149"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/modify",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								"modify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product / Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwOTMzNzExfQ.iA4sOsETk8U9fDjkjQgU-GEmqQo_pGA1t6p5X2Lc25o"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"new_user\",\r\n  \"password\": \"123456\",\r\n  \"email\": \"shaquille.montero.vergel123@gmail.com\",\r\n  \"id_role\": 1,\r\n  \"id_status\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/product/delete/:id",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"product",
+								"delete",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "15"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Category / Get categories",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzIwNzk5ODE2fQ.A-q4qu94OUkNIdOcSYt83HSaeunrHTWd9IOlXMpt9iA"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/category/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"category",
+								""
 							]
 						}
 					},

@@ -25,6 +25,8 @@ class Module(Enum):
     CATEGORY    = "CATEGORY"
     PRODUCT     = "PRODUCT"
     USER        = "USER"
+    INVENTORY   = "INVENTORY"
+    ORDER       = "ORDER"
     
 module_permissions = {
     Module.CATEGORY: {
@@ -38,6 +40,14 @@ module_permissions = {
     Module.USER: {
         Role.ADMINISTRADOR: [Crud.SELECT, Crud.CREATE, Crud.UPDATE, Crud.DELETE],
         Role.PERSONAL: [Crud.SELECT, Crud.UPDATE]
+    },
+    Module.INVENTORY: {
+        Role.ADMINISTRADOR: [Crud.SELECT, Crud.CREATE, Crud.UPDATE, Crud.DELETE],
+        Role.PERSONAL: [Crud.SELECT]
+    },
+    Module.ORDER: {
+        Role.ADMINISTRADOR: [Crud.SELECT, Crud.CREATE, Crud.UPDATE, Crud.DELETE],
+        Role.PERSONAL: [Crud.SELECT]
     }
 }
 

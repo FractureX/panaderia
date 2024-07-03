@@ -1,21 +1,22 @@
 # ---- PostgreSQL ----
 from src.shared.utils import ids
-from src.shared.utils.tables import PostgreSQLTables
+from src.shared.utils.tables import SQLServerTables
+from src.shared.config.Environment import get_environment_variables
+
+_env = get_environment_variables()
 
 # Payment type
 POSTGRESQL_PAYMENT_TYPE_SELECT_ALL      = "SELECT * FROM public.payment_type ORDER BY name ASC; "
 POSTGRESQL_PAYMENT_TYPE_SELECT_BY_ID    = "SELECT * FROM public.payment_type WHERE id = %s; "
 
 # Product
-POSTGRESQL_PRODUCT_INSERT                       = "INSERT INTO public.product (id, name, description, price, min_quantity, image, id_category, id_institution, id_status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id; "
-POSTGRESQL_PRODUCT_SELECT_ALL                   = f"SELECT * FROM public.product WHERE id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY name ASC, description ASC; "
-POSTGRESQL_PRODUCT_SELECT_BY_ID                 = f"SELECT * FROM public.product WHERE id = %s AND id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
-POSTGRESQL_PRODUCT_SELECT_BY_ID_INSTITUTION     = f"SELECT * FROM public.product WHERE id_institution = %s AND id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY name ASC, description ASC; "
-POSTGRESQL_PRODUCT_SELECT_BY_ID_SHOP            = f"SELECT public.product.*, public.product_shop.stock, public.product_shop.id AS id_product_shop, public.product_shop.id_shop FROM public.product INNER JOIN public.product_shop ON public.product.id = public.product_shop.id_product WHERE public.product_shop.id_shop = %s AND public.product.id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY public.product.name ASC, public.product.description ASC; "
-POSTGRESQL_PRODUCT_SELECT_BY_ID_PRODUCT_SHOP    = f"SELECT public.product.*, public.product_shop.stock, public.product_shop.id_shop, public.product_shop.id AS id_product_shop FROM public.product INNER JOIN public.product_shop ON public.product.id = public.product_shop.id_product WHERE public.product_shop.id = %s AND public.product.id_status = {ids.SQLSERVER_STATUS_ACTIVE} "
-POSTGRESQL_PRODUCT_UPDATE                       = f"UPDATE public.product SET name = %s, description = %s, price = %s, min_quantity = %s, image = %s, id_category = %s, id_status = %s WHERE id = %s RETURNING id; "
-POSTGRESQL_PRODUCT_UPDATE_INACTIVATE            = f"UPDATE public.product SET id_status = {ids.SQLSERVER_STATUS_INACTIVE} WHERE id = %s RETURNING id; "
-POSTGRESQL_PRODUCT_UPDATE_ACTIVATE              = f"UPDATE public.product SET id_status = {ids.SQLSERVER_STATUS_ACTIVE} WHERE id = %s RETURNING id; "
+POSTGRESQL_PRODUCT_INSERT                       = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] (name, description, price, id_category, id_status) OUTPUT INSERTED.* VALUES (?, ?, ?, ?, ?); "
+POSTGRESQL_PRODUCT_SELECT_ALL                   = f"SELECT p.*, i.quantity FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] p INNER JOIN [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] i ON p.id = i.id_product WHERE p.id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY p.name ASC, p.description ASC; "
+POSTGRESQL_PRODUCT_SELECT_BY_ID                 = f"SELECT p.*, i.quantity FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] p INNER JOIN [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] i ON p.id = i.id_product WHERE p.id = ? AND p.id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
+POSTGRESQL_PRODUCT_SELECT_BY_ID_CATEGORY        = f"SELECT p.*, i.quantity FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] p INNER JOIN [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] i ON p.id = i.id_product WHERE p.id_category = ? AND p.id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
+POSTGRESQL_PRODUCT_UPDATE                       = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] SET name = ?, description = ?, price = ?, image = ?, id_category = ?, id_status = ?, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = ?; "
+POSTGRESQL_PRODUCT_UPDATE_IMAGE                 = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] SET image = ? OUTPUT INSERTED.* WHERE id = ?; "
+POSTGRESQL_PRODUCT_DELETE                       = f"DELETE FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] OUTPUT DELETED.* WHERE id = ?; "
 
 # Product shop
 POSTGRESQL_PRODUCT_SHOP_SELECT_BY_ID        = "SELECT * FROM public.product_shop WHERE id = %s; "
@@ -23,8 +24,7 @@ POSTGRESQL_PRODUCT_SHOP_INSERT              = "INSERT INTO public.product_shop (
 POSTGRESQL_PRODUCT_SHOP_ADD_STOCK_UPDATE    = "UPDATE public.product_shop SET stock = stock + %s WHERE id = %s RETURNING id; "
 
 # Category
-POSTGRESQL_CATEGORY_SELECT_ALL      = "SELECT * FROM public.category ORDER BY name ASC; "
-POSTGRESQL_CATEGORY_SELECT_BY_ID    = "SELECT * FROM public.category WHERE id = %s; "
+POSTGRESQL_CATEGORY_SELECT_ALL      = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.CATEGORY.value}] ORDER BY name ASC; "
 
 # Role
 POSTGRESQL_ROLE_SELECT_ALL      = "SELECT * FROM public.role; "
@@ -39,25 +39,33 @@ POSTGRESQL_CREDENTIAL_INSERT        = "INSERT INTO public.credential (email, pas
 POSTGRESQL_CREDENTIAL_UPDATE        = "UPDATE public.credential SET email = %s, password = %s WHERE email = (SELECT email FROM public.user WHERE id = %s) RETURNING id; "
 
 # User
-POSTGRESQL_USER_SELECT_ALL          = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
-POSTGRESQL_USER_SELECT_BY_ID        = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE id = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
-POSTGRESQL_USER_SELECT_BY_EMAIL     = f"SELECT * FROM {PostgreSQLTables.USER.value} WHERE email = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
-POSTGRESQL_USER_INSERT              = f"INSERT INTO {PostgreSQLTables.USER.value} (username, password, email, id_role, id_status) OUTPUT Inserted.* VALUES (?, ?, ?, ?, ?); "
-POSTGRESQL_USER_UPDATE              = f"UPDATE {PostgreSQLTables.USER.value} SET username = ?, password = ?, email = ?, updated_at = GETDATE(), id_role = ?, id_status = ? OUTPUT INSERTED.* WHERE id = ?; "
-POSTGRESQL_USER_DELETE              = f"DELETE FROM {PostgreSQLTables.USER.value} OUTPUT DELETED.* WHERE id = ?; "
+POSTGRESQL_USER_SELECT_ALL          = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] WHERE id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
+POSTGRESQL_USER_SELECT_BY_ID        = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] WHERE id = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE} ORDER BY username ASC; "
+POSTGRESQL_USER_SELECT_BY_USERNAME  = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] WHERE username = ? AND id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
+POSTGRESQL_USER_INSERT              = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] (username, password, email, id_role, id_status) OUTPUT INSERTED.* VALUES (?, ?, ?, ?, ?); "
+POSTGRESQL_USER_UPDATE              = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] SET username = ?, password = ?, email = ?, updated_at = GETDATE(), id_role = ?, id_status = ? OUTPUT INSERTED.* WHERE id = ?; "
+POSTGRESQL_USER_DELETE              = f"DELETE FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.USER.value}] OUTPUT DELETED.* WHERE id = ?; "
 
-# Shop
-POSTGRESQL_SHOP_INSERT                      = "INSERT INTO public.shop (name, phone, email, id_status, id_institution, id_ubication, image, id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id; "
-POSTGRESQL_SHOP_SELECT_ALL                  = "SELECT * FROM public.shop ORDER BY name ASC; "
-POSTGRESQL_SHOP_SELECT_BY_ID                = "SELECT * FROM public.shop WHERE id = %s; "
-POSTGRESQL_SHOP_SELECT_BY_INSTITUTION_ID    = "SELECT * FROM public.shop WHERE id_institution = %s; "
-POSTGRESQL_SHOP_UPDATE                      = "UPDATE public.shop SET name = %s, phone = %s, email = %s, id_status = %s, image = %s WHERE id = %s RETURNING id; "
+# Inventory
+POSTGRESQL_INVENTORY_INSERT                 = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] (id_product, quantity, id_status) OUTPUT INSERTED.* VALUES (?, ?, ?); "
+POSTGRESQL_INVENTORY_UPDATE_ADD             = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] SET quantity = quantity + ?, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id_product = ?; "
+POSTGRESQL_INVENTORY_SELECT_BY_ID_PRODUCT   = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] i INNER JOIN [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.PRODUCT.value}] p ON i.id_product = p.id WHERE p.id = ? AND p.id_status = {ids.SQLSERVER_STATUS_ACTIVE}; "
+POSTGRESQL_INVENTORY_UPDATE_STOCK           = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVENTORY.value}] SET quantity = quantity - (SELECT quantity FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER_ITEM.value}] WHERE id_order = ? AND id_product = ?), updated_at = GETDATE() OUTPUT INSERTED.* WHERE id_product = ?; "
 
-# Ubication
-POSTGRESQL_UBICATION_SELECT_ALL     = "SELECT * FROM public.ubication ORDER BY name ASC; "
-POSTGRESQL_UBICATION_SELECT_BY_ID   = "SELECT * FROM public.ubication WHERE id = %s ORDER BY name ASC; "
-POSTGRESQL_UBICATION_INSERT         = "INSERT INTO public.ubication (name, latitude, longitude, cod_postal, id_parent) VALUES (%s, %s, %s, %s, %s) RETURNING id; "
-POSTGRESQL_UBICATION_UPDATE         = "UPDATE public.ubication SET name = %s, latitude = %s, longitude = %s, cod_postal = %s, id_parent = %s WHERE id = %s RETURNING id; "
+# Order
+POSTGRESQL_ORDER_SELECT_ALL     = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] ORDER BY order_date ASC; "
+POSTGRESQL_ORDER_SELECT_BY_ID   = f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] WHERE id = ?; "
+POSTGRESQL_ORDER_INSERT         = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] (id_user, id_status) OUTPUT INSERTED.* VALUES (?, {ids.SQLSERVER_STATUS_NO_PAGADO}); "
+POSTGRESQL_ORDER_UPDATE_TOTAL   = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] SET total_amount = (SELECT SUM(oi.quantity * oi.price) FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER_ITEM.value}] oi WHERE id_order = ?), updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = ?; "
+POSTGRESQL_ORDER_UPDATE_PAGADO  = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] SET id_status = {ids.SQLSERVER_STATUS_PAGADO}, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id = ?; "
+
+# Order item
+POSTGRESQL_ORDER_ITEM_INSERT                = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER_ITEM.value}] (id_order, id_product, quantity, price, id_status) OUTPUT INSERTED.* VALUES (?, ?, ?, ?, {ids.SQLSERVER_STATUS_NO_PAGADO}); "
+POSTGRESQL_ORDER_ITEM_UPDATE_PAGADO         = f"UPDATE [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER_ITEM.value}] SET id_status = {ids.SQLSERVER_STATUS_PAGADO}, updated_at = GETDATE() OUTPUT INSERTED.* WHERE id_order = ?; "
+POSTGRESQL_ORDER_ITEM_SELECT_BY_ID_ORDER    = f"SELECT id_product FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER_ITEM.value}] WHERE id_order = ?; "
+
+# Invoice
+POSTGRESQL_INVOICE_INSERT       = f"INSERT INTO [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.INVOICE.value}] (id_order, total_amount, id_status) OUTPUT INSERTED.* VALUES (?, (SELECT o.total_amount FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{SQLServerTables.ORDER.value}] o WHERE id = ?), {ids.SQLSERVER_STATUS_PAGADO}); "
 
 # Status
 POSTGRESQL_STATUS_SELECT_BY_ID = "SELECT * FROM public.status WHERE id = %s; "
@@ -96,4 +104,4 @@ POSTGRESQL_NOTIFICATION_INSERT              = "INSERT INTO public.notification (
 POSTGRESQL_NOTIFICATION_DETAIL_INSERT   = "INSERT INTO public.notification_detail (id_notification, id_user, read) VALUES (%s, %s, false) RETURNING id; "
 
 def getSelectQueryById(table: str) -> str:
-    return f"SELECT * FROM {table} WHERE id = ?; "
+    return f"SELECT * FROM [{_env.DATABASE_NAME.get('SQLServer')}].[dbo].[{table}] WHERE id = ?; "

@@ -33,7 +33,7 @@ def verify_password(plain_password: str, hashed_password: str):
     return _bcrypt_context.verify(secret=plain_password, hash=hashed_password)
 
 def authenticate_user(conn: connection, email: EmailStr, plain_password: str) -> bool | User | JSONResponse:
-    result = SQLServer.select(conn=conn, query=queries.POSTGRESQL_USER_SELECT_BY_EMAIL, vars=(email,))
+    result = SQLServer.select(conn=conn, query=queries.POSTGRESQL_USER_SELECT_BY_USERNAME, vars=(email,))
     print(type(result))
     if (type(result) is not list): return result
     user: User = User(**result[0])
